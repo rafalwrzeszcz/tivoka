@@ -3,32 +3,32 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
     <title>Tivoka by marcelklehr</title>
   </head>
 
   <body>
-
     <header>
-      <div class="container">
+      <div class="inner">
         <h1>Tivoka</h1>
         <h2>JSON-RPC done right!</h2>
-
-        <section id="downloads">
-          <a href="https://github.com/marcelklehr/tivoka/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/marcelklehr/tivoka/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/marcelklehr/tivoka" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
+        <a href="https://github.com/marcelklehr/tivoka" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
 
-    <div class="container">
-      <section id="main_content">
-        <p>Do JSON-RPC. With Tivoka. It's as easy as that!<br>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p>Do JSON-RPC. With Tivoka. It's as easy as that!<br>
 For convenience, you can easily switch between <a href="http://json-rpc.org/wiki/specification">JSON-RPC 1.0</a> and <a href="http://jsonrpc.org/specification">JSON-RPC 2.0</a> without having to change your code.</p>
 
 <p>Tivoka provides client and server for PHP 5.3+ -- learn more about JSON-RPC at <a href="http://jsonrpc.org/">http://jsonrpc.org/</a>.</p>
@@ -39,20 +39,16 @@ For convenience, you can easily switch between <a href="http://json-rpc.org/wiki
 
 <p>Do a request</p>
 
-<div class="highlight">
-<pre><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
 <span class="nv">$connection</span> <span class="o">=</span> <span class="nx">Tivoka\Client</span><span class="o">::</span><span class="na">connect</span><span class="p">(</span><span class="s1">'http://exapmle.com/api'</span><span class="p">)</span>
 <span class="nv">$request</span> <span class="o">=</span> <span class="nv">$connection</span><span class="o">-&gt;</span><span class="na">sendRequest</span><span class="p">(</span><span class="s1">'substract'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">9</span><span class="p">));</span>
 <span class="k">print</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">;</span><span class="c1">// 42</span>
 <span class="cp">?&gt;</span><span class="x"></span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Create a server</p>
 
-<div class="highlight">
-<pre><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
 <span class="nv">$methods</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'substract'</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">list</span><span class="p">(</span><span class="nv">$num1</span><span class="p">,</span> <span class="nv">$num2</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$params</span>
@@ -61,9 +57,7 @@ For convenience, you can easily switch between <a href="http://json-rpc.org/wiki
 <span class="p">);</span>
 <span class="nx">Tivoka\Server</span><span class="o">::</span><span class="na">provide</span><span class="p">(</span><span class="nv">$methods</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">();</span>
 <span class="cp">?&gt;</span><span class="x"></span>
-</pre>
-</div>
-
+</pre></div>
 
 <h2>Links</h2>
 
@@ -85,11 +79,8 @@ For convenience, you can easily switch between <a href="http://json-rpc.org/wiki
 
 <ol>
 <li>Run <a href="http://getcomposer.org/doc/00-intro.md#installation">composer</a>:</li>
-</ol><div class="highlight">
-<pre><span class="nv">$ </span>php composer.phar install
-</pre>
-</div>
-
+</ol><div class="highlight"><pre><span class="nv">$ </span>php composer.phar install
+</pre></div>
 
 <p>Now, <code>include 'vendor/autoload.php'</code></p>
 
@@ -97,12 +88,9 @@ For convenience, you can easily switch between <a href="http://json-rpc.org/wiki
 
 <ol>
 <li>Run the following:</li>
-</ol><div class="highlight">
-<pre><span class="nv">$ </span>pear channel-discover pearhub.org
+</ol><div class="highlight"><pre><span class="nv">$ </span>pear channel-discover pearhub.org
 <span class="nv">$ </span>pear install pearhub/tivoka
-</pre>
-</div>
-
+</pre></div>
 
 <p>Now, <code>include 'tivoka/include.php'</code></p>
 
@@ -117,9 +105,25 @@ Or <a href="http://github.com/marcelklehr/tivoka/zipball/master">download</a> it
 
 <p>Copyright 2011-2012 by Marcel Klehr<br>
 MIT License.</p>
-      </section>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/marcelklehr/tivoka/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/marcelklehr/tivoka/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/marcelklehr/tivoka"></a> is maintained by <a href="https://github.com/marcelklehr">marcelklehr</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-    
+  
   </body>
 </html>

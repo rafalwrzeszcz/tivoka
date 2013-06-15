@@ -1,5 +1,5 @@
 language: php
-script: php include.php
+script: make ci
 php:
   - 5.3
   - 5.4

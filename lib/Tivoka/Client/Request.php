@@ -132,16 +132,7 @@ class Request
     
         throw new Exception\SyntaxException('Invalid response structure');
     }
-    
-    /**
-     * Determines whether an error occured
-     * @return bool
-     */
-    public function isError()
-    {
-        return ($this->error != NULL);
-    }
-    
+
     /**
      * Checks whether the given response is a valid result
      * @param array $assoc The parsed JSON-RPC response as an associative array

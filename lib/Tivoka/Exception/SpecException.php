@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -25,14 +25,17 @@
  *
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka\Exception;
+
+use DomainException;
 
 /**
  * Tivoka SpecException
  * @package Tivoka
  */
-class SpecException extends Exception {}
-?>
+class SpecException extends DomainException implements Exception
+{
+}

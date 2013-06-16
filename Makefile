@@ -1,6 +1,6 @@
 ##
 # Tivoka - JSON-RPC done right!
-# Copyright (c) 2013 by Marcel Klehr <mklehr@gmx.net>
+# Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
 #
 # MIT LICENSE
 #

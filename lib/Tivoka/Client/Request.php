@@ -40,32 +40,9 @@ use Tivoka\Client\Connection\AbstractConnection;
  */
 class Request
 {
-    public $id;
-    public $method;
-    public $params;
     public $request;
     public $response;
-    
-    public $result;
-    public $error;
-    public $errorMessage;
-    public $errorData;
 
-    public $responseHeaders;
-    public $responseHeadersRaw;
-
-    /**
-     * Constructs a new JSON-RPC request object
-     * @param string $method The remote procedure to invoke
-     * @param mixed $params Additional params for the remote procedure (optional)
-     * @see Tivoka_Connection::send()
-     */
-    public function __construct($method, $params=null) {
-        $this->id = self::uuid();
-        $this->method = $method;
-        $this->params = $params;
-    }
-    
     /**
      * Get the raw, JSON-encoded request 
      * @param int $spec
@@ -248,20 +225,6 @@ class Request
             }
             return $request;
         }
-    }
-    
-    /**
-    * @return string A v4 uuid
-    */
-    static function uuid()
-    {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), // time_low
-        mt_rand(0, 0xffff), // time_mid
-        mt_rand(0, 0x0fff) | 0x4000, // time_hi_and_version
-        mt_rand(0, 0x3fff) | 0x8000, // clk_seq_hi_res/clk_seq_low
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) // node
-        );
     }
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -26,52 +26,63 @@
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
  * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka\Client;
-use Tivoka\Exception;
+
 use Tivoka\Client\Connection\ConnectionInterface;
+use Tivoka\Exception;
+use Tivoka\Transport\Request;
 
 /**
  * JSON-RPC native remote interface
  * @package Tivoka
  */
-class NativeInterface {
-    
+class NativeInterface
+{
     /**
      * Holds the last request
-     * @var Tivoka\Client\Request
+     * @var Request
      */
-    public $last_request;
-    
+    public $lastRequest;
+
+    /**
+     * Holds the last request
+     * @var Tivoka\Transport\Response
+     */
+    public $lastResponse;
+
     /**
      * Holds the connection to the remote server
      * @var ConnectionInterface
      */
     public $connection;
-    
+
     /**
      * Construct a native remote interface
      * @param ConnectionInterface $connection The connection to use
      */
-    public function __construct(ConnectionInterface $connection) {
+    public function __construct(ConnectionInterface $connection)
+    {
         $this->connection = $connection;
     }
-    
+
     /**
      * Sends a JSON-RPC request
-     * @throws Tivoka\Exception\RemoteProcedureException
+     * @param string $method
+     * @param mixed $args
      * @return mixed
+     * @throws Tivoka\Exception\RemoteProcedureException
      */
     public function __call($method, $args) {
-        $this->last_request = new Request($method, $args);
-        $this->connection->send($this->last_request);
-        
-        if($this->last_request->isError()) {
-            throw new Exception\RemoteProcedureException($this->last_request->errorMessage, $this->last_request->error);
+        $this->lastRequest = new Request($method, $args);
+        $this->lastResponse = $this->connection->send($this->lastRequest);
+
+        if ($this->lastResponse->isError()) {
+            throw new Exception\RemoteProcedureException($this->lastResponse->errorMessage, $this->lastResponse->error);
         }
-        return $this->last_request->result;
+        return $this->lastResponse->result;
     }
 
 }

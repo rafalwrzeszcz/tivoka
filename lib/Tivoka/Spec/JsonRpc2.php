@@ -29,45 +29,29 @@
  * @copyright (c) 2013, Marcel Klehr
  */
 
-namespace Tivoka\Transport\Http;
-
-use Tivoka\Transport\Response as BaseResponse;
+namespace Tivoka\Spec;
 
 /**
- * A JSON-RPC response enriched for HTTP transport data
+ * JSON-RPC 2.0 handler
  * @package Tivoka
  */
-class Response extends BaseResponse
+class JsonRpc2 implements SpecInterface
 {
-    public $headers = array();
-    public $headersRaw;
-    
-    /**
-     * Save and parse the HTTP headers
-     * @param array $rawHeaders array of string coming from $http_response_header magic var
-     * @return void
-     */
-    public function setHeaders(array $rawHeaders)
+    //TODO
+    public function prepareRequest()
     {
-        $this->headersRaw = $rawHeaders;
-        $this->headers = static::parseHttpHeaders($rawHeaders);
+        //TODO
     }
 
-    /**
-     * Parses headers as returned by magic variable $http_response_header
-     * @param array $headers array of string coming from $http_response_header
-     * @return array associative array linking a header label with its value
-     */
-    protected static function parseHttpHeaders(array $rawHeaders)
+    //TODO
+    public function interpretError()
     {
-        // rfc2616: The first line of a Response message is the Status-Line
-        $rawHeaders = array_slice($rawHeaders, 1); // removing status-line
+        //TODO
+    }
 
-        $headers = array();
-        foreach ($rawHeaders as $header) {
-            preg_match('/(?P<label>[^ :]+):(?P<body>(.|\\r?\\n(?= +))*)$/', $header, $matches);
-            $headers[$matches['label']] = trim($matches['body']);
-        }
-        return $headers;
+    //TODO
+    public function interpretResult()
+    {
+        //TODO
     }
 }

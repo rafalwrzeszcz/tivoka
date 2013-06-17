@@ -42,4 +42,4 @@ check:
 
 # tests running
 tests:
-	$(PHP) include.php
+	#TODO

@@ -40,33 +40,6 @@ use Tivoka\Tivoka;
 class BatchRequest extends Request
 {
     /**
-     * Constructs a new JSON-RPC batch request
-     * All values of type other than Tivoka\Client\Request will be ignored
-     * @param array $batch A list of requests to include, each a Tivoka_Request
-     * @see Tivoka_Client::send()
-     */
-    public function __construct(array $batch)
-    {
-        $this->id = array();
-    
-        //prepare requests...
-        foreach($batch as $request)
-        {
-            if(!($request instanceof Request) && !($request instanceof Notification))
-                continue;
-            
-            //request...
-            if($request instanceof Request)
-            {
-                if(in_array($request->id, $this->id, true)) continue; // strict compare
-                $this->id[$request->id] = $request;
-            }
-            
-            $this->requests[] = $request;
-        }
-    }
-    
-    /**
      * Get the raw, JSON-encoded request
      * @param int $spec
      * @return string the JSON encoded request

@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -25,28 +25,23 @@
  *
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
+ * @copyright (c) 2013, Marcel Klehr
  */
 
-namespace Tivoka\Client;
+namespace Tivoka\Spec;
 
 /**
- * JSON-RPC notification
  * @package Tivoka
  */
-class Notification extends Request
+interface SpecInterface
 {
-    /**
-     * Constructs a new JSON-RPC notification object
-     * @param string $method The remote procedure to invoke
-     * @param mixed $params Additional params for the remote procedure
-     * @see Tivoka_Connection::send()
-     */
-    public function __construct($method, $params=null)
-    {
-        $this->id = null;
-        $this->method = $method;
-        $this->params = $params;
-    }
+    //TODO
+    public function prepareRequest();
+
+    //TODO
+    public function interpretError();
+
+    //TODO
+    public function interpretResult();
 }
-?>

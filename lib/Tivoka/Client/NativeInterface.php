@@ -75,7 +75,8 @@ class NativeInterface
      * @return mixed
      * @throws Tivoka\Exception\RemoteProcedureException
      */
-    public function __call($method, $args) {
+    public function __call($method, $args)
+    {
         $this->lastRequest = new Request($method, $args);
         $this->lastResponse = $this->connection->send($this->lastRequest);
 
@@ -86,4 +87,3 @@ class NativeInterface
     }
 
 }
-?>

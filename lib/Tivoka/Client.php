@@ -35,9 +35,9 @@ use Tivoka\Client\Connection\Http;
 use Tivoka\Client\Connection\Tcp;
 use Tivoka\Encoder\EncoderInterface;
 use Tivoka\Encoder\StandardEncoder;
+use Tivoka\Spec\SpecInterface;
 use Tivoka\Transport\Notification;
 use Tivoka\Transport\Request;
-use Tivoka\Spec\SpecInterface;
 
 /**
  * The public interface to all tivoka functions
@@ -64,14 +64,12 @@ abstract class Client
             $spec = Tivoka::getSpec($spec);
         }
 
-        //TODO: think about injecting encoder to connection handler
-
         // TCP conneciton is defined as ['host' => $host, 'port' => $port] definition
         if (is_array($target) && isset($target['host'], $target['port'])) {
-            $connection = new Tcp($target['host'], $target['port']);
+            $connection = new Tcp($target['host'], $target['port'], $encoder);
         } else {
             // HTTP end-point should be defined just as string
-            $connection = new Http($target);
+            $connection = new Http($target, $encoder);
         }
 
         $connection->useSpec($spec);

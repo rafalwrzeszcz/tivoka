@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -26,44 +26,47 @@
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
  * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka\Client\Connection;
 
-use Tivoka\Client\Request;
+use Tivoka\Spec\SpecInterface;
+use Tivoka\Transport\Request;
 
 /**
  * Connection interface
  * @package Tivoka
  */
-interface ConnectionInterface {
+interface ConnectionInterface
+{
     /**
      * Sets the spec version to use for this connection
-     * @param string $spec The spec version (e.g.: "2.0")
+     * @param SpecInterface $spec JSON-RPC specification handler
      */
-    public function useSpec($spec);
+    public function useSpec(SpecInterface $spec);
 
     /**
      * Sends a JSON-RPC request
      * @param Request $request A Tivoka request
-     * @return Request if sent as a batch request the BatchRequest object will be returned
+     * @return Tivoka\Transport\Response
      */
     public function send(Request $request);
     
     /**
      * Send a request directly
      * @param string $method
-     * @param array $params
+     * @param array|null $params
+     * @return Tivoka\Transport\Response
      */
-    public function sendRequest($method, $params=null);
+    public function sendRequest($method, array $param = null);
     
     /**
      * Send a notification directly
      * @param string $method
-     * @param array $params
+     * @param array|null $params
      */
-    public function sendNotification($method, $params=null);
+    public function sendNotification($method, array $params = null);
     
     /**
      * Creates a native remote interface for the target server

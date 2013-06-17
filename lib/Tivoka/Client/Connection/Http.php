@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -26,20 +26,23 @@
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
  * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka\Client\Connection;
-use Tivoka\Client\BatchRequest;
+
+use Tivoka\Encoder\EncoderInterface;
 use Tivoka\Exception;
+
+use Tivoka\Client\BatchRequest;
 use Tivoka\Client\Request;
 
 /**
  * HTTP connection
  * @package Tivoka
  */
-class Http extends AbstractConnection {
-
+class Http extends AbstractConnection
+{
     public $target;
     public $headers = array();
 
@@ -47,18 +50,23 @@ class Http extends AbstractConnection {
      * Constructs connection
      * @access private
      * @param string $target URL
+     * @param EncoderInterface $encoder JSON serialization handler.
      */
-    public function __construct($target) {
+    public function __construct($target, EncoderInterface $encoder)
+    {
         //validate url...
         if (!filter_var($target, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) {
             throw new Exception\Exception('Valid URL (scheme://domain[/path][/file]) required.');
         }
 
         //validate scheme...
-        $t = parse_url($target);
-        if (strtolower($t['scheme']) != 'http' && strtolower($t['scheme']) != 'https') {
+        $url = parse_url($target);
+        $scheme = strtolower($url['scheme']);
+        if ($scheme != 'http' && $scheme != 'https') {
             throw new Exception\Exception('Unknown or unsupported scheme given.');
         }
+
+        parent::__construct($encoder);
 
         $this->target = $target;
     }
@@ -67,13 +75,15 @@ class Http extends AbstractConnection {
      * Sets the HTTP headers to use for upcoming send requests
      * @param string label of header
      * @param string value of header
-     * @return Http Self instance
+     * @return self Self instance
      */
-    public function setHeader($label, $value) {
+    public function setHeader($label, $value)
+    {
         $this->headers[$label] = $value;
         return $this;
     }
 
+    //TODO
     /**
      * Sends a JSON-RPC request
      * @param Request $request A Tivoka request

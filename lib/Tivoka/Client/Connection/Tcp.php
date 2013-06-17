@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -26,21 +26,23 @@
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
  * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka\Client\Connection;
-use Tivoka\Client\BatchRequest;
+
+use Tivoka\Encoder\EncoderInterface;
 use Tivoka\Exception;
+
+use Tivoka\Client\BatchRequest;
 use Tivoka\Client\Request;
 
 /**
  * Raw TCP connection
  * @package Tivoka
  */
-class Tcp extends AbstractConnection {
-    
-
+class Tcp extends AbstractConnection
+{
     /**
      * Server host.
      * @var string
@@ -63,13 +65,16 @@ class Tcp extends AbstractConnection {
      * Constructs connection.
      * @param string $host Server host.
      * @param int $port Server port.
+     * @param EncoderInterface $encoder JSON serialization handler.
      */
-    public function __construct($host, $port)
+    public function __construct($host, $port, EncoderInterface $encoder)
     {
         //validate url...
         if (!is_numeric($port)) {
             throw new Exception\Exception('Invalid port specified: "' . $port . '".');
         }
+
+        parent::__construct($encoder);
 
         $this->host = $host;
         $this->port = $port;
@@ -84,7 +89,7 @@ class Tcp extends AbstractConnection {
             fclose($this->socket);
         }
     }
-    
+
     /**
      * Changes timeout.
      * @param int $timeout
@@ -92,16 +97,15 @@ class Tcp extends AbstractConnection {
      */
     public function setTimeout($timeout)
     {
-    	$this->timeout = $timeout;
-    
     	// change timeout for already initialized connection
     	if (isset($this->socket)) {
     		stream_set_timeout($this->socket, $timeout);
     	}
-    
-    	return $this;
+
+    	return parent::setTimeout($timeout);
     }
 
+    //TODO
     /**
      * Sends a JSON-RPC request over plain TCP.
      * @param Request $request,... A Tivoka request.

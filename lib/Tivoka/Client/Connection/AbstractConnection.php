@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -26,45 +26,51 @@
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
  * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka\Client\Connection;
-use Tivoka\Exception;
+
 use Tivoka\Client\NativeInterface;
-use Tivoka\Client\Notification;
-use Tivoka\Client\Request;
-use Tivoka\Tivoka;
+use Tivoka\Exception;
+use Tivoka\Spec\SpecInterface;
+use Tivoka\Transport\Notification;
+use Tivoka\Transport\Request;
 
 /**
  * JSON-RPC connection
  * @package Tivoka
  */
-abstract class AbstractConnection implements ConnectionInterface {
-    
+abstract class AbstractConnection implements ConnectionInterface
+{
     /**
      * Initial timeout value.
      * @var int
      */
     const DEFAULT_TIMEOUT = 5;
-    
+
     /**
      * Timeot.
      * @var int
      */
     protected $timeout = self::DEFAULT_TIMEOUT;
-    
-    public $spec = Tivoka::SPEC_2_0;
-    
+
+    /**
+     * @var SpecInterface
+     */
+    public $spec;
+
     /**
      * Sets the spec version to use for this connection
-     * @param string $spec The spec version (e.g.: "2.0")
+     * @param SpecInterface $spec JSON-RPC specification handler
+     * @return self Self instance
      */
-    public function useSpec($spec) {
-        $this->spec = Tivoka::validateSpecVersion($spec);
+    public function useSpec(SpecInterface $spec)
+    {
+        $this->spec = $spec;
         return $this;
     }
-    
+
     /**
      * Changes timeout.
      * @param int $timeout
@@ -73,30 +79,31 @@ abstract class AbstractConnection implements ConnectionInterface {
     public function setTimeout($timeout)
     {
     	$this->timeout = $timeout;
-    
+
     	return $this;
     }
-    
+
     /**
      * Send a request directly
      * @param string $method
-     * @param array $params
+     * @param array|null $params
      */
-    public function sendRequest($method, $params=null) {
+    public function sendRequest($method, array $params = null)
+    {
         $request = new Request($method, $params);
-        $this->send($request);
-        return $request;
+        return $this->send($request);
     }
-    
+
     /**
      * Send a notification directly
      * @param string $method
-     * @param array $params
+     * @param array|null $params
      */
-    public function sendNotification($method, $params=null) {
+    public function sendNotification($method, array $params = null)
+    {
         $this->send(new Notification($method, $params));
     }
-    
+
     /**
      * Creates a native remote interface for the target server
      * @return Tivoka\Client\NativeInterface

@@ -61,11 +61,16 @@ abstract class Tivoka
     }
 
     /**
-     * @param int $version
+     * @param int|string $version
      * @return Tivoka\Spec\SpecInterface
      */
     public static function getSpec($version)
     {
+        // translate version name to version ID
+        if (!is_numeric($version)) {
+            $version = static::getSpecVersion($version);
+        }
+
         switch ($version) {
             case static::SPEC_1_0:
                 return new JsonRpc1();

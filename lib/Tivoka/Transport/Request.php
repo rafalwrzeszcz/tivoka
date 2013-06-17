@@ -46,7 +46,7 @@ class Request
      * @param string $method The remote procedure to invoke
      * @param array|null $params Additional params for the remote procedure (optional)
      */
-    public function __construct($method, $params = null)
+    public function __construct($method, array $params = null)
     {
         $this->id = static::uuid();
         $this->method = $method;

@@ -105,20 +105,4 @@ abstract class AbstractConnection implements ConnectionInterface {
     {
         return new NativeInterface($this);
     }
-
-    /**
-     * Constructs connection handler.
-     * @param mixed $target Server connection configuration.
-     * @return ConnectionInterface
-     */
-    public static function factory($target)
-    {
-        // TCP conneciton is defined as ['host' => $host, 'port' => $port] definition
-        if (is_array($target) && isset($target['host'], $target['port'])) {
-            return new Tcp($target['host'], $target['port']);
-        } else {
-            // HTTP end-point should be defined just as string
-            return new Http($target);
-        }
-    }
 }

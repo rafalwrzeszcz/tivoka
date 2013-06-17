@@ -40,9 +40,6 @@ use Tivoka\Client\Connection\AbstractConnection;
  */
 class Request
 {
-    public $request;
-    public $response;
-
     /**
      * Interprets the response
      * @param string $response json data

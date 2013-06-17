@@ -1,7 +1,7 @@
 <?php
 /**
  * Tivoka - JSON-RPC done right!
- * Copyright (c) 2011-2012 by Marcel Klehr <mklehr@gmx.net>
+ * Copyright (c) 2011-2013 by Marcel Klehr <mklehr@gmx.net>
  *
  * MIT LICENSE
  *
@@ -26,10 +26,18 @@
  * @package  Tivoka
  * @author Marcel Klehr <mklehr@gmx.net>
  * @author Rafał Wrzeszcz <rafal.wrzeszcz@wrzasq.pl>
- * @copyright (c) 2011-2012, Marcel Klehr
+ * @copyright (c) 2011-2013, Marcel Klehr
  */
 
 namespace Tivoka;
+
+use Tivoka\Client\Connection\Http;
+use Tivoka\Client\Connection\Tcp;
+use Tivoka\Encoder\EncoderInterface;
+use Tivoka\Encoder\StandardEncoder;
+use Tivoka\Transport\Notification;
+use Tivoka\Transport\Request;
+use Tivoka\Spec\SpecInterface;
 
 /**
  * The public interface to all tivoka functions
@@ -37,67 +45,72 @@ namespace Tivoka;
  */
 abstract class Client
 {
-    
     /**
      * Initializes a Connection to a remote server
      * @param mixed $target Remote end-point definition
+     * @param EncoderInterface $encoder JSON handler serializer and unserializer
+     * @param SpecInterface|string|int $spec JSON-RPC version to use (can be string, numeric version, or existing SpecInterface instance)
      * @return Tivoka\Client\Connection\ConnectionInterface
      */
-    public static function connect($target) {
-        return Client\Connection\AbstractConnection::factory($target);
+    public static function connect($target, EncoderInterface $encoder = null, $spec = Tivoka::SPEC_2_0)
+    {
+        // use default encoder
+        if (!isset($encoder)) {
+            $encoder = new StandardEncoder();
+        }
+
+        // unify spec
+        if (!$spec instanceof SpecInterface) {
+            $spec = Tivoka::getSpec($spec);
+        }
+
+        //TODO: think about injecting encoder to connection handler
+
+        // TCP conneciton is defined as ['host' => $host, 'port' => $port] definition
+        if (is_array($target) && isset($target['host'], $target['port'])) {
+            $connection = new Tcp($target['host'], $target['port']);
+        } else {
+            // HTTP end-point should be defined just as string
+            $connection = new Http($target);
+        }
+
+        $connection->useSpec($spec);
+        return $connection;
     }
-    
+
     /**
      * Creates a request
      * @param string $method The method to invoke
      * @param array $params The parameters
-     * @return Tivoka\Client\Request
+     * @return Request
      */
-    public static function createRequest($method, $params=null) {
-        return new Client\Request($method, $params);
+    public static function createRequest($method, array $params = null)
+    {
+        return new Request($method, $params);
     }
-    
-    /**
-     * alias of Tivoka\Client::createRequest
-     */
-    public static function request($method, $params=null) {
-        return self::createRequest($method, $params);
-    }
-    
+
     /**
      * Creates a notification
      * @param string $method The method to invoke
      * @param array $params The parameters
+     * @return Notification
      */
-    public static function createNotification($method, $params=null) {
-        return new Client\Notification($method, $params);
+    public static function createNotification($method, array $params = null)
+    {
+        return new Notification($method, $params);
     }
-    
-    /**
-     * alias of Tivoka\Client::createNotification
-     */
-    public static function notification($method, $params=null) {
-        return self::createNotification($method, $params);
-    }
-    
+
+    //TODO: refactor
     /**
      * Creates a batch request
      * @param mixed $request either an array of requests or a comma-seperated list of requests
      * @throws Tivoka\Exception\Exception
      * @return Tivoka\Client\BatchRequest
      */
-    public static function createBatch($request) {
+    public static function createBatch($request)
+    {
         if(func_num_args() > 1 ) $request = func_get_args();
         if(!is_array($request)) throw new Exception\Exception('Object of invalid data type passed to Tivoka::createBatch.');
         return new Client\BatchRequest($request);
     }
-    
-    /**
-     * alias of Tivoka\Client::createBatch
-     */
-    public static function batch($request) {
-        if(func_num_args() > 1 ) $request = func_get_args();
-        return self::createBatch($request);
-    }
 }
-?>

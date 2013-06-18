@@ -31,27 +31,57 @@
 
 namespace Tivoka\Spec;
 
+use Tivoka\Transport\Request;
+use Tivoka\Transport\Response;
+
 /**
  * JSON-RPC 2.0 handler
  * @package Tivoka
  */
 class JsonRpc2 implements SpecInterface
 {
-    //TODO
-    public function prepareRequest()
+    /**
+     * {@inheritDoc}
+     */
+    public function prepareRequest(Request $request)
     {
-        //TODO
+        $data = array(
+            'jsonrpc' => '2.0',
+            'method' => $request->method,
+        );
+        if ($request->id !== null) {
+            $data['id'] = $request->id;
+        }
+        if ($params !== null) {
+            $data['params'] = $request->params;
+        }
+        return $data;
     }
 
-    //TODO
-    public function interpretError()
+    /**
+     * {@inheritDoc}
+     */
+    public function interpretResponse(array $data, Response $response)
     {
-        //TODO
-    }
+        if (!isset($data['jsonrpc']) || $data['jsonrpc'] != '2.0') {
+            throw Exception\SpecException('Expected JSON-RPC 2.0 response.');
+        }
 
-    //TODO
-    public function interpretResult()
-    {
-        //TODO
+        if (isset($data['id'])) {
+            $response->id = $data['id'];
+
+            //server error?
+            if (isset($data['error']) {
+                $response->error = $data['error']['code'];
+                $response->errorMessage = $data['error']['message'];
+                $response->errorData = isset($data['error']['data']) ? $data['error']['data'] : null;
+                return $response;
+            } elseif (isset($data['result']) {
+                $response->result = $data['result'];
+                return $response;
+            }
+        }
+    
+        throw new Exception\SyntaxException('Invalid response structure');
     }
 }

@@ -31,27 +31,54 @@
 
 namespace Tivoka\Spec;
 
+use Tivoka\Exception;
+use Tivoka\Transport\Request;
+use Tivoka\Transport\Response;
+
 /**
  * JSON-RPC 1.0 handler
  * @package Tivoka
  */
 class JsonRpc1 implements SpecInterface
 {
-    //TODO
-    public function prepareRequest()
+    /**
+     * {@inheritDoc}
+     */
+    public function prepareRequest(Request $request)
     {
-        //TODO
+        $data = array(
+            'method' => $request->method,
+            'id' => $request->id
+        );
+        if ($request->params !== null) {
+            if (count(array_filter(array_keys($params), 'is_string')) > 0) {
+                throw new Exception\SpecException('JSON-RPC 1.0 doesn\'t allow named parameters');
+            }
+            $data['params'] = $request->params;
+        }
+        return $data;
     }
 
-    //TODO
-    public function interpretError()
+    /**
+     * {@inheritDoc}
+     */
+    public function interpretResponse(array $data, Response $response)
     {
-        //TODO
-    }
+        if (isset($data['id'])) {
+            $response->id = $data['id'];
 
-    //TODO
-    public function interpretResult()
-    {
-        //TODO
+            //server error?
+            if (isset($data['error']) {
+                $response->error = $data['error']['code'];
+                $response->errorMessage = $data['error']['message'];
+                $response->errorData = isset($data['error']['data']) ? $data['error']['data'] : null;
+                return $response;
+            } elseif (isset($data['result']) {
+                $response->result = $data['result'];
+                return $response;
+            }
+        }
+    
+        throw new Exception\SyntaxException('Invalid response structure');
     }
 }

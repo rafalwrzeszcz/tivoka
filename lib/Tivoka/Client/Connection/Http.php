@@ -33,9 +33,10 @@ namespace Tivoka\Client\Connection;
 
 use Tivoka\Encoder\EncoderInterface;
 use Tivoka\Exception;
+use Tivoka\Transport\Http\Response;
+use Tivoka\Transport\Request;
 
 use Tivoka\Client\BatchRequest;
-use Tivoka\Client\Request;
 
 /**
  * HTTP connection
@@ -83,40 +84,42 @@ class Http extends AbstractConnection
         return $this;
     }
 
-    //TODO
     /**
      * Sends a JSON-RPC request
      * @param Request $request A Tivoka request
-     * @return Request if sent as a batch request the BatchRequest object will be returned
+     * @return Response
      */
-    public function send(Request $request) {
-        if(func_num_args() > 1 ) $request = func_get_args();
-        if(is_array($request)) {
-            $request = new BatchRequest($request);
-        }
-        
-        if(!($request instanceof Request)) throw new Exception\Exception('Invalid data type to be sent to server');
-        
+    public function send(Request $request)
+    {
         // preparing connection...
         $context = array(
-                'http' => array(
-                    'content' => $request->getRequest($this->spec),
-                    'header' => "Content-Type: application/json\r\n".
-                                "Connection: Close\r\n",
-                    'method' => 'POST',
-                    'timeout' => $this->timeout
-                )
+            'http' => array(
+                'content' => $this->buildRequest($request),
+                'header' => "Content-Type: application/json\r\n".
+                            "Connection: Close\r\n",
+                'method' => 'POST',
+                'timeout' => $this->timeout
+            )
         );
-        foreach($this->headers as $label => $value) {
-          $context['http']['header'] .= $label . ": " . $value . "\r\n";
+        foreach ($this->headers as $label => $value) {
+            $context['http']['header'] .= $label . ': ' . $value . "\r\n";
         }
         //sending...
         $response = @file_get_contents($this->target, false, stream_context_create($context));
-        if($response === FALSE) {
+        if ($response === FALSE) {
             throw new Exception\ConnectionException('Connection to "'.$this->target.'" failed');
         }
-        $request->setResponse($response);
-        $request->setHeaders($http_response_header);
-        return $request;
+
+        $response = $this->interpretResponse($response);
+        $response->setHeaders($http_response_header);
+        return $rsponse;
+    }
+
+    /**
+     * @return Response
+     */
+    protected function createResponse()
+    {
+        return new Response();
     }
 }

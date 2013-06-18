@@ -42,8 +42,6 @@ class Response
     public $errorMessage;
     public $errorData;
 
-    //TODO
-
     /**
      * @return bool
      */

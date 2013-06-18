@@ -31,17 +31,24 @@
 
 namespace Tivoka\Spec;
 
+use Tivoka\Transport\Request;
+use Tivoka\Transport\Response;
+
 /**
  * @package Tivoka
  */
 interface SpecInterface
 {
-    //TODO
-    public function prepareRequest();
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function prepareRequest(Request $request);
 
-    //TODO
-    public function interpretError();
-
-    //TODO
-    public function interpretResult();
+    /**
+     * @param array $data JSON struct representation
+     * @param Response $response Destination container
+     * @return Response
+     */
+    public function interpretResponse(array $data, Response $response);
 }

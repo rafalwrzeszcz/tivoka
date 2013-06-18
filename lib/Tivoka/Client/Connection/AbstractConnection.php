@@ -106,10 +106,65 @@ abstract class AbstractConnection implements ConnectionInterface
 
     /**
      * Creates a native remote interface for the target server
-     * @return Tivoka\Client\NativeInterface
+     * @return NativeInterface
      */
     public function getNativeInterface()
     {
         return new NativeInterface($this);
+    }
+
+    /**
+     * @return Tivoka\Transport\Response
+     */
+    abstract protected function createResponse();
+
+    /**
+     * @param Request $request
+     * @return string JSON-RPC request
+     */
+    protected function buildRequest(Request $request)
+    {
+        if (func_num_args() > 1 ) {
+            $request = func_get_args();
+        }
+        if (is_array($request)) {
+            //TODO:BEGIN
+            $request = new BatchRequest($request);
+        }
+
+        // build request data
+        $request = $this->spec->prepareRequest($request);
+        $request = $this->encoder->encode($request);
+        return $request;
+    }
+
+    /**
+     * @param string $response JSON response from server
+     * @return Tivoka\Transport\Response
+     */
+    protected function interpretResponse($response)
+    {
+        //no response?
+        if (trim($response) == '') {
+            throw new Exception\ConnectionException('No response received');
+        }
+    
+        //decode
+        $response = $this->encoder->decode($response);
+        if ($response == NULL) {
+            throw new Exception\SyntaxException('Invalid response encoding');
+        }
+
+        $response = $this->spec->interpretResponse($response, $this->createResponse());
+
+        // perform additional checks
+        if ($request->id != $response->id) {
+            // note - due to single-thread nature of PHP we need to act it as an exception
+            // however this can really happen, since JSON-RPC is, by-desing, asynchronous!
+            //TODO: use different class, it's not a syntax error
+            throw new Exception\SyntaxException('Response ID did not match request ID');
+        }
+
+        return $response;
     }
 }

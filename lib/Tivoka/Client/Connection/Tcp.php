@@ -33,9 +33,10 @@ namespace Tivoka\Client\Connection;
 
 use Tivoka\Encoder\EncoderInterface;
 use Tivoka\Exception;
+use Tivoka\Transport\Http\Response;
+use Tivoka\Transport\Request;
 
 use Tivoka\Client\BatchRequest;
-use Tivoka\Client\Request;
 
 /**
  * Raw TCP connection
@@ -105,11 +106,10 @@ class Tcp extends AbstractConnection
     	return parent::setTimeout($timeout);
     }
 
-    //TODO
     /**
      * Sends a JSON-RPC request over plain TCP.
      * @param Request $request,... A Tivoka request.
-     * @return Request|BatchRequest If sent as a batch request the BatchRequest object will be returned.
+     * @return Tivoka\Transport\Response
      */
     public function send(Request $request)
     {
@@ -125,19 +125,8 @@ class Tcp extends AbstractConnection
             stream_set_timeout($this->socket, $this->timeout);
         }
 
-        if (func_num_args() > 1) {
-            $request = func_get_args();
-        }
-        if (is_array($request)) {
-            $request = new BatchRequest($request);
-        }
-
-        if (!($request instanceof Request)) {
-            throw new Exception\Exception('Invalid data type to be sent to server');
-        }
-
         // sending request
-        fwrite($this->socket, $request->getRequest($this->spec));
+        fwrite($this->socket, $this->buildRequest($request));
         fwrite($this->socket, "\n");
         fflush($this->socket);
 
@@ -148,7 +137,14 @@ class Tcp extends AbstractConnection
             throw new Exception\ConnectionException('Connection to "' . $this->host . ':' . $this->port . '" failed');
         }
 
-        $request->setResponse($response);
-        return $request;
+        return $this->interpretResponse($response);
+    }
+
+    /**
+     * @return Response
+     */
+    protected function createResponse()
+    {
+        return new Response();
     }
 }
